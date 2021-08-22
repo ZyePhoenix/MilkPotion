@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,15 +23,25 @@ import static org.bukkit.ChatColor.translateAlternateColorCodes;
 
 public class MilkPotionCommand {
 
-    private static final String POTION_NAME = MilkPotion.get().getConfig().getString("potions.MILK_POTION_NAME");
-    private static final String COLORED_POTION_NAME = translateAlternateColorCodes('&', Objects.requireNonNull(POTION_NAME));
+    private static final String MILK_POTION_NAME = MilkPotion.get().getConfig().getString("potions.MILK_POTION_NAME");
+    private static final String COLORED_MILK_POTION_NAME = translateAlternateColorCodes('&', Objects.requireNonNull(MILK_POTION_NAME));
+
+    private static final String DEBUFF_ONLY_NAME = MilkPotion.get().getConfig().getString("potions.DEBUFF_ONLY_NAME");
+    private static final String COLORED_DEBUFF_ONLY_NAME = translateAlternateColorCodes('&', Objects.requireNonNull(DEBUFF_ONLY_NAME));
 
     private static final String MESSAGE_RECEIVE = MilkPotion.get().getConfig().getString("messages.RECEIVE_POTION");
     private static final String COLORED_MESSAGE_RECEIVE = translateAlternateColorCodes('&', String.valueOf(MESSAGE_RECEIVE));
 
-    private static final int RGB_RED = MilkPotion.get().getConfig().getInt("potions.MILK_POTION_RGB_COLOR.RED");
-    private static final int RGB_GREEN = MilkPotion.get().getConfig().getInt("potions.MILK_POTION_RGB_COLOR.GREEN");
-    private static final int RGB_BLUE = MilkPotion.get().getConfig().getInt("potions.MILK_POTION_RGB_COLOR.BLUE");
+    private static final int MILK_RGB_RED = MilkPotion.get().getConfig().getInt("potions.MILK_POTION_RGB_COLOR.RED");
+    private static final int MILK_RGB_GREEN = MilkPotion.get().getConfig().getInt("potions.MILK_POTION_RGB_COLOR.GREEN");
+    private static final int MILK_RGB_BLUE = MilkPotion.get().getConfig().getInt("potions.MILK_POTION_RGB_COLOR.BLUE");
+
+    private static final int DEBUFF_ONLY_RGB_RED = MilkPotion.get().getConfig().getInt("potions.DEBUFF_ONLY_RGB_COLOR.RED");
+    private static final int DEBUFF_ONLY_RGB_GREEN = MilkPotion.get().getConfig().getInt("potions.DEBUFF_ONLY_RGB_COLOR.GREEN");
+    private static final int DEBUFF_ONLY_RGB_BLUE = MilkPotion.get().getConfig().getInt("potions.DEBUFF_ONLY_RGB_COLOR.BLUE");
+
+    private static final List<String> MILK_LORE = Arrays.asList("","&aAll Potion Effect Remover");
+    private static final List<String> DEBUFF_ONLY_LORE = Arrays.asList("","&2Debuff Potion Effect Remover","","&6&lVERY RARE ITEM");
 
     @Command(aliases = {"milkpotion"}, usage = "<amount>", desc = "Give amount of MilkPotions.")
     @CommandPermissions("milkpotion.command.use")
@@ -39,14 +50,39 @@ public class MilkPotionCommand {
 
         Player p = (Player) sender;
         int amount = args.getInteger(0);
+
         ItemStack milkPotion = new ItemStack(Material.SPLASH_POTION, amount);
+
         PotionMeta meta = (PotionMeta) milkPotion.getItemMeta();
-        meta.setColor(Color.fromRGB(RGB_RED,RGB_GREEN,RGB_BLUE));
+        meta.setColor(Color.fromRGB(MILK_RGB_RED,MILK_RGB_GREEN,MILK_RGB_BLUE));
         milkPotion.setItemMeta(meta);
-        meta.setDisplayName(COLORED_POTION_NAME);
-        List<String> potLore = MilkPotion.get().getConfig().getStringList("potions.MILK_POTION_LORE");
-        meta.setLore(colorList(potLore));
+
+        meta.setDisplayName(COLORED_MILK_POTION_NAME);
+        meta.setLore(colorList(MILK_LORE));
         milkPotion.setItemMeta(meta);
+
+        p.getInventory().addItem(milkPotion);
+        p.sendMessage(COLORED_MESSAGE_RECEIVE);
+    }
+
+    @Command(aliases = {"debuffpotion"}, usage = "<amount>", desc = "Give amount of DebuffRemovingPotions.")
+    @CommandPermissions("milkpotion.command.use")
+    @CommandScopes("player")
+    public static void debuffpotion(final CommandContext args, final CommandSender sender) throws CommandException {
+
+        Player p = (Player) sender;
+        int amount = args.getInteger(0);
+
+        ItemStack milkPotion = new ItemStack(Material.SPLASH_POTION, amount);
+
+        PotionMeta meta = (PotionMeta) milkPotion.getItemMeta();
+        meta.setColor(Color.fromRGB(DEBUFF_ONLY_RGB_RED,DEBUFF_ONLY_RGB_GREEN,DEBUFF_ONLY_RGB_BLUE));
+        milkPotion.setItemMeta(meta);
+
+        meta.setDisplayName(COLORED_DEBUFF_ONLY_NAME);
+        meta.setLore(colorList(DEBUFF_ONLY_LORE));
+        milkPotion.setItemMeta(meta);
+
         p.getInventory().addItem(milkPotion);
         p.sendMessage(COLORED_MESSAGE_RECEIVE);
     }
